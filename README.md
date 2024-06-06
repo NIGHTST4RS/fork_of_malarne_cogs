@@ -30,7 +30,8 @@ NB: This cog may break randomly, for more updated version, use the one under Web
 Require Pillow (`pip3 install Pillow`)
 
 The first Leveler cog made for v3 !
-Inspired by Stevy's v2 Leveler, forked and modified by me
+Inspired by Stevy's v2 Leveler, forked and modified by me.
+
 Basic code made by Malarne, TrustyJaid helped a lot making things look awesome (he entirely made the [p]profile image, big thumbs up to him)
 Just use [p]set locale fr-FR if you want to translate the cog into french !
 NB: channel whitelist is enabled by default, if you want people to get xp from all your channels, just use [p]levelerset channel whitelist toggle
