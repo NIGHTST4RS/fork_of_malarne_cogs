@@ -30,15 +30,16 @@ class Leveler(commands.Cog):
         self.profiles = UserProfile()
         self.loop = self.bot.loop.create_task(self.start())
         self.restart = True
-        self.defaultrole = _("New")
+        self.defaultrole = _("Member")
         self._session = aiohttp.ClientSession()
 
     __version__ = "1.0.0"
-    __author__ = "Malarne#1418"
+    __author__ = "nightstars."
     __info__ = {
         "bot_version": "3.0.0rc2",
         "description": (
             "A leveler cog for Red V3\n",
+            "Originally made by Malarne (Malarne#1418)\n",
             "Inspired by Stevy's v2 leveler cog\n",
             "Please consult the docs at ayrobot.netlify.com for setup informations.\n",
             "Thanks for using my cog !",
@@ -49,7 +50,7 @@ class Leveler(commands.Cog):
             "Please consult the docs at ayrobot.netlify.com for setup informations.",
         ),
         "required_cogs": [],
-        "requirements": ["pillow"],
+        "requirements": ["pillow", "asyncio", "aiohttp"],
         "short": "Leveler tool, better than MEE6",
         "tags": ["leveler", "pillow", "fun"],
     }
@@ -100,10 +101,10 @@ class Leveler(commands.Cog):
     async def get_avatar(self, user):
         try:
             res = BytesIO()
-            await user.avatar_url_as(format="png", size=1024).save(res, seek_begin=True)
+            await user.avatar.replace(format="png", size=1024).save(res, seek_begin=True)
             return res
         except:
-            async with self._session.get(user.avatar_url_as(format="png", size=1024)) as r:
+            async with self._session.get(user.avatar.replace(format="png", size=1024)) as r:
                 img = await r.content.read()
                 return BytesIO(img)
 
@@ -136,7 +137,7 @@ class Leveler(commands.Cog):
         return im
 
     def make_full_profile(self, avatar_data, user, xp, nxp, lvl, minone, elo, ldb, desc, bg=None):
-        img = Image.new("RGBA", (340, 390), (17, 17, 17, 255))
+        img = Image.new("RGBA", (176, 254), (197, 197, 197, 255))
         if bg is not None:
             bg_width, bg_height = bg.size
             ratio = bg_height / 390
@@ -155,7 +156,7 @@ class Leveler(commands.Cog):
             img.paste(bg, offset, bg)
         img = self.add_corners(img, 10)
         draw = ImageDraw.Draw(img)
-        usercolor = (255, 255, 0)  # user.color.to_rgb()
+        usercolor = (132, 194, 255)  # user.color.to_rgb()
         aviholder = self.add_corners(Image.new("RGBA", (140, 140), (255, 255, 255, 255)), 10)
         nameplate = self.add_corners(Image.new("RGBA", (180, 60), (0, 0, 0, 255)), 10)
         xptot = self.add_corners(Image.new("RGBA", (310, 20), (215, 215, 215, 255)), 10)
@@ -163,7 +164,7 @@ class Leveler(commands.Cog):
         img.paste(nameplate, (155, 10), nameplate)
         img.paste(xptot, (15, 340), xptot)
 
-        fontpath = str(bundled_data_path(self) / "cambria.ttc")
+        fontpath = str(bundled_data_path(self) / "BubblegumSans-Regular.ttf")
 
         font1 = ImageFont.truetype(fontpath, 18)
         font2 = ImageFont.truetype(fontpath, 22)
@@ -189,19 +190,19 @@ class Leveler(commands.Cog):
         draw.text((10, 220), ldb_str, fill="white", font=font3)
         draw.text((10, 260), rank_str, fill="white", font=font3)
         nick = user.display_name
-        if font2.getsize(nick)[0] > 150:
+        if font2.getbbox(nick)[0] > 150:
             nick = nick[:15] + "..."
 
         draw.text((154, 316), f"{lprc}%", fill=usercolor, font=font1)
         draw.text((100, 360), (prog_str + f" {xp}/{nxp}"), fill=usercolor, font=font1)
-        draw.text(((font3.getsize(lvl_str)[0] + 20), 180), f"{lvl}", fill=usercolor, font=font3)
-        draw.text(((font3.getsize(ldb_str)[0] + 20), 220), f"{ldb}", fill=usercolor, font=font3)
-        draw.text(((font3.getsize(rank_str)[0] + 20), 260), f"{elo}", fill=usercolor, font=font3)
+        draw.text(((font3.getbbox(lvl_str)[0] + 90), 180), f"{lvl}", fill=usercolor, font=font3)
+        draw.text(((font3.getbbox(ldb_str)[0] + 125), 220), f"{ldb}", fill=usercolor, font=font3)
+        draw.text(((font3.getbbox(rank_str)[0] + 80), 260), f"{elo}", fill=usercolor, font=font3)
 
         draw.text((162, 14), f"{nick}", fill=usercolor, font=font2)
         draw.text((162, 40), f"{user.name}#{user.discriminator}", fill=usercolor, font=font1)
-        margin = 162
-        offset = 70
+        margin = 190
+        offset = 180
         count = 0
         for line in textwrap.wrap(desc, width=20):
             count += 1
@@ -209,7 +210,7 @@ class Leveler(commands.Cog):
                 draw.text((margin, offset), f"{line}...", fill=usercolor, font=font1)
                 break
             draw.text((margin, offset), f"{line}", fill=usercolor, font=font1)
-            offset += font1.getsize(line)[1]
+            offset += 20
         temp = BytesIO()
         img.save(temp, format="PNG")
         temp.name = "profile.png"
@@ -230,7 +231,7 @@ class Leveler(commands.Cog):
             "nxp": 100,
             "lvl": 1,
             "minone": 0,
-            "elo": default if default else _("New"),
+            "elo": default if default else _("DAB"),
             "ldb": 0,
             "desc": "",
             "bg": bg,
@@ -335,7 +336,7 @@ class Leveler(commands.Cog):
                 and await self.profiles.data.guild(message.guild).lvlup_announce()
             ):
                 await message.channel.send(
-                    _("{} is now level {} !".format(message.author.mention, lvl))
+                    _("{} has reached **Level {}!**".format(message.author.mention, lvl))
                 )
             await self.profiles._check_exp(message.author)
             await self.profiles._check_role_member(message.author)
