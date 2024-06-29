@@ -2,7 +2,7 @@
 
 Install guide:
 
-`[p]repo add ForkedMalarneCogs https://github.com/NightStar-s/fork_of_malarne_cogs`
+`[p]repo add ForkedMalarneCogs https://github.com/NIGHTST4RS/fork_of_malarne_cogs`
 
 then:
 
