@@ -15,11 +15,6 @@ Enjoy
 Updated version of https://github.com/NekoTony/Neko-Cogs account cog
 Malarne couldn't find that person's discord tag, so couldn't ask him before uploading, but Malarne discord's DMs are open.
 
-# Boobs
-
-Updated version of https://github.com/Canule/Mash-Cogs oboobs cog
-Uploaded with authorization of original author, you can also find that cog on his v3 branch (may not be fully updated)
-
 # League
 
 A cog to display information about League of Legends, like your ranking, masteries, ranking of your current game, and history (may be slow, need to be modified)
